@@ -103,10 +103,8 @@ class Player(Turtle):
         distance = math.sqrt((a ** 2) + (b ** 2))
 
         if distance < 30:
-            print("Player is colision: true")
             return True
         else:
-            print("Player is colision: false")
             return False
     
 #classe da bala
@@ -357,6 +355,8 @@ class Enemy_2(Turtle):
         player.kills += 1      
   
 
+##Contador de tempo da bala, pra nao poder atirar muito rapido
+bulletTimeCount = 0
 #cria uma lista de niveis
 levels = [""]
 
@@ -466,11 +466,13 @@ def play():
         pen.draw_lifes() #chama a função que desenha vidas
         for enemy_2 in enemies_2:
             
-            ontimer(enemy_2.move, t=300) #faz o inimigo andar
+           ontimer(enemy_2.move, t=300) #faz o inimigo andar
         for enemy in enemies:
             
             ontimer(enemy.move, t=300) #faz o inimigo andar
         while True:
+            global bulletTimeCount
+            bulletTimeCount = bulletTimeCount + 1
             n_enemies_1_1 = 3   #numero de inimigos mortos necessarios para nova onda de inimigos aparecer
             n_enemies_1_2 = 8   #numero de inimigos mortos necessarios para ir para segunda fase
             n_enemies_2 = 13    #numero de inimigos necessarios para ganhar o jogo
@@ -560,21 +562,33 @@ def play():
             wn.update()
 bullets = []
 def createBulletRight():
-    bullet = Bullet()
-    bullets.append(bullet)
-    bullet.shoot_right()
+    global bulletTimeCount
+    if(bulletTimeCount>700):
+        bullet = Bullet()
+        bullets.append(bullet)
+        bullet.shoot_right()
+        bulletTimeCount= 0
 def createBulletLeft():
-    bullet = Bullet()
-    bullets.append(bullet)
-    bullet.shoot_left()
+    global bulletTimeCount
+    if(bulletTimeCount>700):
+        bullet = Bullet()
+        bullets.append(bullet)
+        bullet.shoot_left()
+        bulletTimeCount= 0
 def createBulletUp():
-    bullet = Bullet()
-    bullets.append(bullet)
-    bullet.shoot_up()
+    global bulletTimeCount
+    if(bulletTimeCount>700):
+        bullet = Bullet()
+        bullets.append(bullet)
+        bullet.shoot_up()
+        bulletTimeCount= 0
 def createBulletDown():
-    bullet = Bullet()
-    bullets.append(bullet)
-    bullet.shoot_down()
+    global bulletTimeCount
+    if(bulletTimeCount>700):
+        bullet = Bullet()
+        bullets.append(bullet)
+        bullet.shoot_down()
+        bulletTimeCount= 0
 
 pen = Pen() 
 player = Player()
