@@ -2,7 +2,7 @@ from turtle import *
 import random
 import math
 import time
-
+import gc
 
 #####configurações da tela
 wn = Screen()
@@ -55,7 +55,7 @@ class Player(Turtle):
         Turtle.__init__(self)
         self.shape("personagem_baixo.gif")
         self.penup()
-        self.step = 32 #quantidade de pixels que o player anda
+        self.step = 12 #quantidade de pixels que o player anda
         self.kills = 0 #quantidade de inimigos que o player matou
         self.lifes = 3 #quantidade de vidas que o player inicia
 
@@ -103,136 +103,150 @@ class Player(Turtle):
         distance = math.sqrt((a ** 2) + (b ** 2))
 
         if distance < 30:
+            print("Player is colision: true")
             return True
         else:
+            print("Player is colision: false")
             return False
     
 #classe da bala
 class Bullet(Turtle):
-   def __init__(self):
-      Turtle.__init__(self)
-      self.penup()
-      self.color('gray')
-      #define onde a bala ira nascer
-      self.x = player.xcor()
-      self.y = player.xcor()
-      self.move = None
-      #coloca a bala fora da tela no inicio do jogo
-      self.setx(1000)
-      self.sety(1000)
-      self.shape("square")
-      self.shapesize(stretch_wid=0.3,stretch_len=0.3,outline=None)
-      #define se a bala esta pronta pra ser atirada
-      self.status = "ready"
-      #define se existe colisão
-      self.colisao = 'nao'
+    def __init__(self):
+        Turtle.__init__(self)
+        self.penup()
+        self.color('gray')
+        #define onde a bala ira nascer
+        self.x = player.xcor()
+        self.y = player.xcor()
+        self.move = None
+        #coloca a bala fora da tela no inicio do jogo
+        self.setx(1000)
+        self.sety(1000)
+        self.shape("square")
+        self.shapesize(stretch_wid=0.3,stretch_len=0.3,outline=None)
+        #define se a bala esta pronta pra ser atirada
+        self.status = "ready"
+        #define se existe colisão
+        self.colisao = 'nao'
 
     #funções que controla para onde a bala deve ir
-   def shoot_right(self):
-	   if self.status == "ready":
-		   self.status = "SLA"
-		   self.move_right()
-   def move_right(self):
-	   if self.move != 'right':
-		   self.goto(player.xcor(),player.ycor())
-	   
-	   self.showturtle()
-	   self.move = 'right'
-	   self.shoot(self.move)
-   def shoot_left(self):
-	   if self.status == "ready":
-		   self.status = "SLA"
-		   self.move_left()
-   def move_left(self):
-         if self.move != 'left':
+    def shoot_right(self):
+        if self.status == "ready":
+            self.status = "SLA"
+            self.move_right()
+    def move_right(self):
+        if self.move != 'right':
             self.goto(player.xcor(),player.ycor())
-         self.showturtle()
-         self.move = 'left'
-         self.shoot(self.move)
-	   
-   def shoot_up(self):
-	   if self.status == "ready":
-		   self.status = "SLA"
-		   self.move_up()
-   def move_up(self):
-	   if self.move != 'up':
-		   self.goto(player.xcor(),player.ycor())
-	   self.showturtle()
-	   self.move = 'up'
-	   self.shoot(self.move)
-   def shoot_down(self):
-	   if self.status == "ready":
-		   self.status = "SLA"
-		   self.move_down()
-   def move_down(self):
-	   if self.move != 'down':
-		   self.goto(player.xcor(),player.ycor())
-	   self.showturtle()
-	   self.move = 'down'
-	   self.shoot(self.move)
+        
+        self.showturtle()
+        self.move = 'right'
+        self.shoot(self.move)
+
+    def shoot_left(self):
+        if self.status == "ready":
+            self.status = "SLA"
+            self.move_left()
+
+    def move_left(self):
+        if self.move != 'left':
+            self.goto(player.xcor(),player.ycor())
+        self.showturtle()
+        self.move = 'left'
+        self.shoot(self.move)
+    def move_up(self):
+        if self.move != 'up':
+            self.goto(player.xcor(),player.ycor())
+        self.showturtle()
+        self.move = 'up'
+        self.shoot(self.move)  
+    def move_down(self):
+        if self.move != 'down':
+            self.goto(player.xcor(),player.ycor())
+        self.showturtle()
+        self.move = 'down'
+        self.shoot(self.move)  
+    def shoot_up(self):
+        if self.status == "ready":
+            self.status = "SLA"
+            self.move_up()
+
+    def shoot_down(self):
+        if self.status == "ready":
+            self.status = "SLA"
+            self.move_down()
+
     #função que move a bala pra direção selecionada nas funções acima
-   def shoot(self,move):
-	   if self.move == 'left':
-		   move_to_x = self.xcor() - 1
-		   move_to_y = self.ycor()
-	   if self.move == 'right':
-		   move_to_x = self.xcor() + 1
-		   move_to_y = self.ycor()
-	   if self.move == 'up':
-		   move_to_x = self.xcor() 
-		   move_to_y = self.ycor() + 1
-	   if self.move == 'down':
-		   move_to_x = self.xcor() 
-		   move_to_y = self.ycor() - 1
-		   
-	
-	   if move_to_x > 224 or move_to_x < -224:
-		   self.hideturtle()
-		   self.goto(1000,1000)
-		   self.status = "ready"
-		   self.move = "sla"
-		   return
-		   
-	   if move_to_y > 224 or move_to_y < -224:
-		   self.hideturtle() 
-		   self.goto(1000,1000)
-		   self.status = "ready"
-		   self.move = "sla"
-		   return   
-	   
-       #se a colisao existe tira a bala da tela e deixa voce atirar de novo
-	   if self.colisao == 'sim':
-		   self.hideturtle() 
-		   self.goto(1000,1000)
-		   self.status = "ready"
-		   self.move = "sla"
-		   self.colisao = 'nao'
-		   return 
-		   
+    def shoot(self,move):
+        if self.move == 'left':
+            move_to_x = self.xcor() - 1
+            move_to_y = self.ycor()
+        if self.move == 'right':
+            move_to_x = self.xcor() + 1
+            move_to_y = self.ycor()
+        if self.move == 'up':
+            move_to_x = self.xcor() 
+            move_to_y = self.ycor() + 1
+        if self.move == 'down':
+            move_to_x = self.xcor() 
+            move_to_y = self.ycor() - 1
+            
+
+        # if move_to_x > 224 or move_to_x < -224:
+        #     #self.hideturtle()
+        #     #self.goto(player.xcor(),player.ycor())
+        #     self.status = "ready"
+        #     self.move = "sla"
+        #     return
+            
+        # if move_to_y > 224 or move_to_y < -224:
+        #     #self.hideturtle() 
+        #     #self.goto(player.xcor(),player.ycor())
+        #     self.status = "ready"
+        #     self.move = "sla"
+        #     return   
+        
+        #se a colisao existe tira a bala da tela e deixa voce atirar de novo
+        # if self.colisao == 'sim':
+        #     #self.hideturtle() 
+        #     #self.goto(player.xcor(),player.ycor())
+        #     self.status = "ready"
+        #     self.move = "sla"
+        #     self.colisao = 'nao'
+        #     return 
+            
         #chama a mesma função de antes para mover a bala continuamente a cada 3 milisegundos
-	   self.goto(move_to_x, move_to_y)
-	   if self.move == 'left':
-		   ontimer(self.move_left,t=3)
-	   if self.move == 'right':
-		   ontimer(self.move_right,t=3)
-	   if self.move == 'up':
-		   ontimer(self.move_up,t=3)
-	   if self.move == 'down':
-		   ontimer(self.move_down,t=3)
+        self.goto(move_to_x, move_to_y)
+        if self.move == 'left':
+            ontimer(self.move_left,t=3)
+        if self.move == 'right':
+            ontimer(self.move_right,t=3)
+        if self.move == 'up':
+            ontimer(self.move_up,t=3)
+        if self.move == 'down':
+            ontimer(self.move_down,t=3)
 	   
 	#função que define se tem colisao
-   def is_collision(self, other):
-      a = self.xcor()-other.xcor()
-      b = self.ycor()-other.ycor()
-      distance = math.sqrt((a ** 2) + (b ** 2))
+    def is_collision(self, other):
+        a = self.xcor()-other.xcor()
+        b = self.ycor()-other.ycor()
+        distance = math.sqrt((a ** 2) + (b ** 2))
 
-      if distance < 20:
-         self.colisao = 'sim'
-         # enemy_2.life -= 1
-         return True
-      else:
-         return False
-			   
+        if distance < 20:
+            self.colisao = 'sim'
+            # enemy_2.life -= 1
+            return True
+        else:
+            return False
+    def destroy(self):
+        self.clear()
+        self.penup()
+        self.goto(2000,2000)
+        self.hideturtle()
+        #turtle_list.remove(self)
+           # a seguir é pra evitar memory leaks
+        # Remove qualquer outra referencia a esse turtle
+        del self
+
 		   
 	     
          
@@ -483,10 +497,16 @@ def play():
             pen.xy_enemies = []
             pen.xy_enemies_2 = []
             for enemy in enemies:
-                pen.xy_enemies.append(((enemy.xcor()),(enemy.ycor()))) #inclui a localização de cada inimigo na lista
-                if bullet.is_collision(enemy):#"mata" o inimigo se a bala colidir nele
-                    enemy.destroy()
+                for bullet in bullets:
+                    pen.xy_enemies.append(((enemy.xcor()),(enemy.ycor()))) #inclui a localização de cada inimigo na lista
+                    if bullet.is_collision(enemy):#"mata" o inimigo se a bala colidir nele
+                        enemy.destroy()
+                        bullet.destroy()
+                        print("Length before:", len(bullets))
+                       # bullets.remove(bullet)
+                        print("Length after:", len(bullets))
                 if player.is_collision(enemy): #diminiu uma vida do player se ele colidir com o inimigo
+                    print("colison enemy")
                     player.lifes -= 1
                     player.goto(random.choice(chao))#teleporta o inimigo para uma cordenada sem inimigos
                     if player.lifes == 2:
@@ -506,10 +526,11 @@ def play():
                         return
             for enemy_2 in enemies_2:
                 pen.xy_enemies_2.append(((enemy_2.xcor()),(enemy_2.ycor())))
-                if bullet.is_collision(enemy_2):
-                    enemy_2.life -= 1
-                    if enemy_2.life == 0:
-                        enemy_2.destroy()
+                for bullet in bullets:
+                    if bullet.is_collision(enemy_2):
+                        enemy_2.life -= 1
+                        if enemy_2.life == 0:
+                            enemy_2.destroy()
                 if player.is_collision(enemy_2):
                     player.lifes -= 1
                     player.goto(random.choice(chao))
@@ -528,12 +549,37 @@ def play():
                         wn.bgcolor('black')
                         wn.bgpic('morte.png')
                         return
-            wn.update()
+                #Bullets que devem ser removidas
+            to_remove = [bullet for bullet in bullets if bullet.colisao == 'sim' or bullet.xcor() > 224 or bullet.xcor() < -224 or bullet.ycor() > 224 or bullet.ycor() < -224]
 
-#define variaveis como turtle
+            # Remove as bullets que devem ser removidas
+            for bullet in to_remove:
+                bullets.remove(bullet)
+                bullet.destroy()
+                gc.collect()
+            wn.update()
+bullets = []
+def createBulletRight():
+    bullet = Bullet()
+    bullets.append(bullet)
+    bullet.shoot_right()
+def createBulletLeft():
+    bullet = Bullet()
+    bullets.append(bullet)
+    bullet.shoot_left()
+def createBulletUp():
+    bullet = Bullet()
+    bullets.append(bullet)
+    bullet.shoot_up()
+def createBulletDown():
+    bullet = Bullet()
+    bullets.append(bullet)
+    bullet.shoot_down()
+
 pen = Pen() 
 player = Player()
-bullet = Bullet()
+#bullet = Bullet()
+
 enemies = []
 enemies_2 = []
 #define paredes para colisão
@@ -546,10 +592,11 @@ onkey(player.go_left,"a")
 onkey(player.go_right,"d")
 onkey(player.go_up,"w")
 onkey(player.go_down,"s")
-onkey(bullet.shoot_right,"Right")
-onkey(bullet.shoot_left,"Left")
-onkey(bullet.shoot_up,"Up")
-onkey(bullet.shoot_down,"Down")
+
+onkey(createBulletRight, "Right")
+onkey(createBulletLeft, "Left")
+onkey(createBulletUp, "Up")
+onkey(createBulletDown, "Down")
 onkey(play,"p")
 onkey(bye,"q")
 
@@ -557,7 +604,7 @@ onkey(bye,"q")
 wn.mainloop()
 
 
-    
+
     
   
 
