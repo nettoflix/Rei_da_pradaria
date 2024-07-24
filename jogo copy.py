@@ -5,6 +5,7 @@ import time
 import gc
 from UDPsocket import *
 import sys
+import ast
 import uuid
 import json
 
@@ -59,7 +60,7 @@ class Player(Turtle):
         Turtle.__init__(self)
         self.shape("walking_down.gif")
         self.penup()
-        self.step = 32 #quantidade de pixels que o player anda
+        self.step = 12 #quantidade de pixels que o player anda
         self.kills = 0 #quantidade de inimigos que o player matou
         self.lifes = 3 #quantidade de vidas que o player inicia
         self.isDead = False
@@ -98,8 +99,10 @@ class Player(Turtle):
         move_to_y = self.ycor()
 
         self.shape(self.personagem_direita)
+
         if (move_to_x,move_to_y) not in walls:
             self.goto(move_to_x, move_to_y)
+
     #função que consefere se o player colidiu com algo
     def is_collision(self, other):
         a = self.xcor()-other.xcor()
@@ -121,6 +124,9 @@ class Player(Turtle):
         self.shape(down)
     def moveto(self, pos):
         x, y = pos
+        #print("move X: ", x)
+        ##print("Y:", y)
+        #print("Xcor: ", self.xcor())
         if(x > self.xcor()):
             self.shape("walking_right.gif")
         elif(x < self.xcor()):
@@ -216,6 +222,30 @@ class Bullet(Turtle):
             move_to_x = self.xcor() 
             move_to_y = self.ycor() - 1
             
+
+        # if move_to_x > 224 or move_to_x < -224:
+        #     #self.hideturtle()
+        #     #self.goto(player.xcor(),player.ycor())
+        #     self.status = "ready"
+        #     self.move = "sla"
+        #     return
+            
+        # if move_to_y > 224 or move_to_y < -224:
+        #     #self.hideturtle() 
+        #     #self.goto(player.xcor(),player.ycor())
+        #     self.status = "ready"
+        #     self.move = "sla"
+        #     return   
+        
+        #se a colisao existe tira a bala da tela e deixa voce atirar de novo
+        # if self.colisao == 'sim':
+        #     #self.hideturtle() 
+        #     #self.goto(player.xcor(),player.ycor())
+        #     self.status = "ready"
+        #     self.move = "sla"
+        #     self.colisao = 'nao'
+        #     return 
+            
         #chama a mesma função de antes para mover a bala continuamente a cada 3 milisegundos
         self.goto(move_to_x, move_to_y)
         if self.move == 'left':
@@ -259,7 +289,6 @@ class Enemy(Turtle):
         Turtle.__init__(self)
         self.shape("zumbi.gif")
         self.status = 'vivo'
-        self.wasKilled = False
         self.penup()
         self.speed = 32 #define a velocidade do inimigo
         self.goto(x,y)
@@ -306,6 +335,9 @@ class Enemy_2(Turtle):
         self.speed = 32
         self.status = 'vivo'
         who = random.randint(1,2)
+        global isOnline
+        global player2
+        print("isOnline:",isOnline)
         if(isOnline):
             if(who == 1):
                 self.chosenPlayer = player
@@ -319,6 +351,11 @@ class Enemy_2(Turtle):
         self.direction = None
         if self.chosenPlayer.isDead and self.chosenPlayer == player2:
             self.chosenPlayer = player
+        if self.chosenPlayer == player:
+            pass#print("player1 lives: ",self.chosenPlayer.lifes)
+        else:
+            pass#print("player2 lives: ",self.chosenPlayer.lifes)
+        #print("chosen lifes: ",self.chosenPlayer.lifes)
         px = self.xcor() - self.chosenPlayer.xcor()
         py =  self.ycor() - self.chosenPlayer.ycor()
         
@@ -448,7 +485,7 @@ level_2 =[[1,1,1,1,1,1,1,0,0,0, 1, 1, 1, 1, 1, 1],#0
           [1,0,0,0,0,0,0,0,0,0, 0, 0, 0, 0, 0, 1],#5
           [1,0,0,0,0,0,0,0,0,0, 0, 0, 0, 0, 0, 1],#6
           [0,0,0,0,0,0,0,0,0,0, 0, 0, 0, 0, 0, 0],#7
-          [0,0,0,0,0,0,0,0,2,0, 0, 0, 0, 0, 0, 0],#8
+          [0,0,0,0,0,0,0,0,2,0, 0, 0, 5, 0, 0, 0],#8
           [0,0,0,0,0,0,0,0,0,0, 0, 0, 0, 0, 0, 0],#9
           [1,0,0,0,0,0,0,0,0,0, 0, 0, 0, 0, 0, 1],#10
           [1,0,0,0,5,0,0,0,0,0, 0, 0, 0, 0, 0, 1],#11
@@ -456,6 +493,22 @@ level_2 =[[1,1,1,1,1,1,1,0,0,0, 1, 1, 1, 1, 1, 1],#0
           [1,1,0,0,0,0,0,0,0,0, 0, 0, 0, 0, 1, 1],#13
           [1,1,1,1,0,0,0,0,0,0, 0, 0, 0, 1, 1, 1],#14
           [1,1,1,1,1,1,1,0,0,0, 1, 1, 1, 1, 1, 1]]#15
+# level_2 =[[1,1,1,1,1,1,1,0,0,0, 1, 1, 1, 1, 1, 1],#0
+#           [1,1,1,1,0,0,0,0,0,0, 0, 0, 0, 1, 1, 1],#1
+#           [1,1,0,0,0,0,0,0,0,0, 0, 0, 0, 0, 1, 1],#2
+#           [1,1,0,0,0,0,0,0,0,0, 0, 0, 0, 0, 0, 1],#3
+#           [1,0,0,0,0,0,0,0,0,0, 0, 0, 0, 0, 0, 1],#4
+#           [1,0,0,0,0,0,0,0,0,0, 0, 0, 0, 0, 0, 1],#5
+#           [1,0,0,0,0,0,0,0,0,0, 0, 0, 0, 0, 0, 1],#6
+#           [0,0,0,0,0,0,0,0,0,0, 0, 0, 0, 0, 0, 0],#7
+#           [0,0,0,0,0,0,0,0,2,0, 0, 0, 0, 5, 0, 0],#8
+#           [0,0,0,0,0,0,0,0,0,0, 0, 0, 0, 0, 0, 0],#9
+#           [1,0,0,0,0,0,0,0,0,0, 0, 0, 0, 0, 0, 1],#10
+#           [1,0,0,0,0,0,0,0,0,0, 0, 0, 0, 0, 0, 1],#11
+#           [1,0,0,0,0,0,0,0,0,0, 0, 0, 0, 0, 0, 1],#12
+#           [1,1,0,0,0,0,0,0,0,0, 0, 0, 0, 0, 1, 1],#13
+#           [1,1,1,1,0,0,0,0,0,0, 0, 0, 0, 1, 1, 1],#14
+#           [1,1,1,1,1,1,1,0,0,0, 1, 1, 1, 1, 1, 1]]#15
 
 #inclui as matrizes na lista
 levels.append(level_1_1)
@@ -517,9 +570,6 @@ def play():
                 ontimer(enemy.move, t=300) #faz o inimigo andar
             
         while True:
-            ##Se o jogo for online local (se estiver conectado com outro player). Então a gente faz a comunicação via socket das informações que 
-            ## precisam ser compartilhadadas entre os dois jogadores
-            # No nosso caso, o servidor é o jogador definido como "Player1". É no processo dele que serão definida as posiçõees do Inimigo
             if(isOnline):
                 global player2Pos
                 global enemyPositions_received
@@ -538,34 +588,53 @@ def play():
                 dados["player2lifes"] = player.lifes
                 dados["Player2_enemyhits"] = player.enemyHits
                 player.resetHits()
-                #envia o dicionário com as informações para o outro jogador
-                cliente.send_message(json.dumps(dados), cliente.host , cliente.port)   
+               # print("dados", dados)
+                #print('\n')
+                    
+                #print(dados)
+                cliente.send_message(json.dumps(dados), cliente.host , cliente.port)    #envia a posição do player1 para o player2
                 message, addr = servidor.receive_message()            
+                #print(message)
                 if(message != -1):
                     global isPlayer2Connected
                     isPlayer2Connected = True
+                    #print(f"Recebeu mensagem de {addr}: {message}")
+                    # se recebeu uma coordenada do tipo "(x,y)"
+                    # if message[0] == "(":
+                    #     coord = float(message[1:message.index(",")]), float(message[message.index(",")+1:-2])
+                    #     player2.showturtle()
+                    #     player2.goto(coord)
+                   # print("MEssage:", message)
+                    #message_dic = ast.literal_eval(message)
+                   # message_str = json.dumps(message)
                     message_dic = json.loads(message)
+                    #print(message_dic)
                     player2Pos = message_dic['Player2Pos']
                     player2.showturtle()
+                    ##player2.goto(player2Pos)
                     player2.moveto(player2Pos)
                     if(not isPlayer1):
+                        #print("Received enemy positions", enemyPositions_received)
                         enemyPositions_received = message_dic['EnemyPositions']
                         enemy2Positions_received = message_dic['Enemy2Positions']
                         for i in range(len(enemyPositions_received)):
                             if(len(enemies) == len(enemyPositions_received)):
+                                #print("Enemy pos receivid",enemyPositions_received)
                                 enemies[i].goto(enemyPositions_received[i])
                         for i in range(len(enemy2Positions_received)):
                             if(len(enemies_2) == len(enemy2Positions_received)):
+                                #print("Enemy pos receivid",enemyPositions_received)
                                 enemies_2[i].goto(enemy2Positions_received[i])
+
                     player2BulletsPos = message_dic['bullets_positions']
-                    player2BulletsDir = message_dic['bullets_directions']
+                    player2BulletsDir = message_dic['bullets_directions']  
+                    bullets_uuid = [uuid.UUID(uid) for uid in message_dic['bullets_uuid']]
                     if(int(message_dic['players_kills']) > players_kills):
                         players_kills = int(message_dic['players_kills'])
                     player2.lifes = message_dic['player2lifes']
                     player2.enemyHits = message_dic['Player2_enemyhits']
-                    #queremos só criar as balas do player2 uma única vez por bala
-                    #então vamos criar uma lista de ID's únicos para saber quais balas já foram criadas
-                    bullets_uuid = [uuid.UUID(uid) for uid in message_dic['bullets_uuid']]
+                    #print(message_dic)  
+                    # print("bullets_uuid", bullets_uuid)
                     for i in range(len(player2BulletsDir)):
                         uuids_registereded = [bullet.uuid for bullet in bullets2]
                         if(bullets_uuid[i] not in uuids_registereded):
@@ -585,15 +654,19 @@ def play():
                                 newBullet.goto(player2.pos())
                             if(newBullet != None):
                                 newBullet.uuid = bullets_uuid[i]
-                #normalmente os enemies_2 são controlados pelo player1 (o servidor), e o Player2 (client) apenas copia as posições
-                #então se o player1 morrer, o player2 deve assumir o controle do movimento dos enemies_2
+            
                 if(not isPlayer1 and not targetChanged):
                         if(player2.isDead):
+                            print("other is dead")
                             for enemy_2 in enemies_2:
                                 ontimer(enemy_2.move, t=300)
                             targetChanged = True    
 
-            
+            if(player.lifes <= 0): return
+            #vamos supor que a gente recebe a poisção do player2 via lan 
+            #também recebemos a quantidade de balas desse player2 e a posição de cada uma
+            #atualizamos a posição do player2 e das balas dele
+            #checamos se o inimigo foi atingido por alguma bala do player2 ou se o player2 morreu
 
 
             global bulletTimeCount
@@ -601,10 +674,8 @@ def play():
             n_enemies_1_1 = 3   #numero de inimigos mortos necessarios para nova onda de inimigos aparecer
             n_enemies_1_2 = 8   #numero de inimigos mortos necessarios para ir para segunda fase
             n_enemies_2 = 13    #numero de inimigos necessarios para ganhar o jogo
-
-            #Essa parte é necessária para essa instância saber os tiros que o outro jogador já acertou 
-            #Para que a vida dos inimigos seja a mesma para os dois jogadores 
-            #(se jogador1 acertar um tiro, o inimigo perde uma vida para os dois jogadores)
+            #print("1- Enemies size:", len(enemies))
+            #print("PLayer Kills:", players_kills)
             if(isOnline):
                 for i in range(len(player2.enemyHits)):
                     if(len(enemies)> i):
@@ -617,6 +688,7 @@ def play():
                                 enemies[i].destroy()
                                 player2.enemyHits[i] = 0
                     if(len(enemies_2) >= (i-8)):
+                        print("enemyhits", player2.enemyHits)
                         if(player2.enemyHits[i] == 1):
                             enemies_2[i-8].life -= 1
                             player2.enemyHits[i-8] = 0
@@ -624,19 +696,22 @@ def play():
                                 enemies_2[i-8].destroy() 
                 if(player2.lifes <=0 ):
                     player2.isDead = True
-                    player2.hideturtle()
-                    player2.goto(2000,2000)
 
             if players_kills == (n_enemies_1_1): #se a quantidade necessaria de inimigos forem mortos ele spawna mais inimigos
                 players_kills += 1
                 setup_maze(levels[2])
-                print("Spawna mais inimigos")
+                print("spawna mais", len(enemies))
+                #Turtle.bye()
                 for i in range(len(enemies)):
                     if(isPlayer1):
                         ontimer(enemies[i].move, t=300)
+                    else:
+                        if(len(enemyPositions_received) > 0):
+                            pass#enemies[i].goto(enemyPositions_received[i])
+                        #enemy.goto(enemyPositions_received.pop(0))
             if players_kills == (n_enemies_1_2): #se todos os inimigos da fase 1 forem mortos passa pra fase 2
+                print("passa pra fase 2")
                 players_kills += 1
-                print("Passa pra fase 2")
                 pen.write('level 2')
                 enemy.showturtle()
                 setup_maze(levels[3])
@@ -666,6 +741,9 @@ def play():
                         bullets.remove(bullet)
                         players_kills += 1
                         player.enemyHits[i] += 1
+                        #print("Length before:", len(bullets))
+                       # 
+                        #print("Length after:", len(bullets))
 
                 if player.is_collision(enemy): #diminiu uma vida do player se ele colidir com o inimigo
                     print("colison enemy")
@@ -688,7 +766,7 @@ def play():
                         return
             for i in range(len(enemies_2)):
                 enemy_2 = enemies_2[i]
-                print("enemy_2 life:", enemy_2.life)
+                #print("enemy_2 life:", enemy_2.life)
                 pen.xy_enemies_2.append(((enemy_2.xcor()),(enemy_2.ycor())))
                 for bullet in bullets:
                     if bullet.is_collision(enemy_2):
@@ -702,7 +780,8 @@ def play():
 
 
                 if player.is_collision(enemy_2):
-                    player.lifes -= 1
+                    if(isPlayer1):
+                        player.lifes -= 1
                     player.goto(random.choice(chao))
                     if player.lifes == 2:
                         pen.goto(-180,300)
@@ -732,7 +811,6 @@ def play():
                 bullets2.remove(bullet2)
                 bullet2.destroy()
                 gc.collect()
-            if(player.lifes <= 0): return
             wn.update()
 bullets = []
 bullets2 = []
@@ -793,17 +871,16 @@ def createBulletRightForPlayer2(pos):
     bullets2.append(bullet2)
     bullet2.shoot_right()
     return bullet2
-# def killEnemies():
-#     global players_kills
-#     global player
-#     for i in range(len(enemies)):
-#         enemy = enemies[i]
-#         if(enemy.wasKilled == False):
-#             pen.xy_enemies.append(((enemy.xcor()),(enemy.ycor())))
-#             enemy.destroy()
-#             players_kills += 1
-#             player.enemyHits[i] += 1
-#             enemy.wasKilled = True
+def killEnemies():
+    global players_kills
+    global player
+    for i in range(len(enemies)):
+        enemy = enemies[i]
+        if(enemy.status == 'vivo'):
+            pen.xy_enemies.append(((enemy.xcor()),(enemy.ycor())))
+            enemy.destroy()
+            players_kills += 1
+            player.enemyHits[i] += 1
 
 
 
@@ -840,7 +917,7 @@ onkey(createBulletRight, "Right")
 onkey(createBulletLeft, "Left")
 onkey(createBulletUp, "Up")
 onkey(createBulletDown, "Down")
-# onkey(killEnemies, "k")
+onkey(killEnemies, "k")
 onkey(play,"p")
 onkey(bye,"q")
 
